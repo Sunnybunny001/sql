@@ -56,9 +56,25 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
-```
-Your answer...
-```
+Customer Address Management Using Slowly Changing Dimensions
+
+**Architecture 1: Type 1 SCD — Overwrite Existing Records**
+
+The `Customer_Address` table contains `address_id` (PK), `customer_id` (FK), `street_address`, `city`, `province`, `postal_code`, `country`, and `last_updated`.
+
+When a customer changes their address, an `UPDATE` statement replaces the previous address information in the existing record. This approach maintains current customer details without preserving historical changes.
+
+Type 1 SCD is appropriate for a bookstore that only needs customers' latest addresses for communication and deliveries.
+
+**Architecture 2: Type 2 SCD — Preserve Historical Records**
+
+The `Customer_Address_History` table contains `address_version_id` (PK), `customer_id` (FK), `street_address`, `city`, `province`, `postal_code`, `country`, `effective_start_date`, `effective_end_date`, and `is_current`.
+
+When a customer changes their address, the previous record is marked as inactive by setting `is_current = 0` and assigning an `effective_end_date`. A new address record is inserted with an updated start date, a NULL end date, and `is_current = 1`.
+
+This approach preserves previous addresses and supports historical reporting, auditing, and tracking customer information over time.
+
+**Comparison:** Type 1 SCD offers simpler maintenance and lower storage requirements, while Type 2 SCD maintains a complete history of customer address changes at the cost of additional records and more complex queries.
 
 ***
 
